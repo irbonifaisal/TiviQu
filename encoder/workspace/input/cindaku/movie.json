@@ -1,0 +1,28 @@
+{
+  "id": "cindaku",
+  "title": "Cindaku",
+  "genre": "Drama",
+  "year": 2026,
+  "rating": "SU",
+  "language": "Indonesia",
+  "description": "Sinopsis singkat film Cindaku.",
+
+  "poster": "poster.jpg",
+  "banner": "banner.jpg",
+  "logo": "logo.png",
+
+  "episodes": [
+    {
+      "id": "ep-001",
+      "number": 1,
+      "title": "Awal Pertemuan",
+      "filename": "episode01.mp4"
+    },
+    {
+      "id": "ep-002",
+      "number": 2,
+      "title": "Rahasia",
+      "filename": "episode02.mp4"
+    }
+  ]
+}

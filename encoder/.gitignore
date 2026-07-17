@@ -1,0 +1,24 @@
+# Virtual Environment
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# VS Code
+.vscode/
+
+# Encoder Workspace
+encoder/workspace/output/
+encoder/workspace/temp/
+encoder/workspace/cache/
+encoder/workspace/logs/
+
+workspace/output/
+workspace/temp/
+workspace/cache/
+workspace/logs/
+
+__pycache__/
+*.pyc
