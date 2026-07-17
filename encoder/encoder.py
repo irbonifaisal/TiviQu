@@ -1,69 +1,32 @@
-from encoder.config import APP_NAME, VERSION
-from encoder.core import Scanner, Validator, Analyzer
-from encoder.core.logger import success, error
+from encoder.config import OUTPUT_DIR
+from encoder.services.ffmpeg_service import FFmpegService
+from encoder.utils.logger import Logger
 
 
-def print_summary(movies):
+class Encoder:
 
-    total_episode = 0
+    def __init__(self):
 
-    print()
+        self.ffmpeg = FFmpegService()
 
-    for movie in movies:
+    def encode(self, movies):
 
-        print(f"Movie : {movie.title}")
-        print(f"Genre : {movie.genre}")
-        print(f"Year  : {movie.year}")
-        print()
+        for movie in movies:
 
-        for ep in movie.episodes:
-            print(f"    Episode {ep.number:02d} : {ep.title}")
+            Logger.line()
+            Logger.info(f"Encoding : {movie.title}")
 
-        total_episode += len(movie.episodes)
+            movie_output = OUTPUT_DIR / movie.id
 
-        print()
+            for episode in movie.episodes:
 
-    print(f"Movies Found   : {len(movies)}")
-    print(f"Episodes Found : {total_episode}")
+                Logger.info(f"  EP{episode.number:02d}")
 
+                output = movie_output / f"episode{episode.number:02d}"
 
-def main():
+                playlist = self.ffmpeg.encode_hls(
+                    episode.filepath,
+                    output
+                )
 
-    print("=" * 50)
-    print(APP_NAME)
-    print(f"Version : {VERSION}")
-    print("=" * 50)
-
-    print()
-    print("Scanning workspace/input ...")
-
-    scanner = Scanner()
-    movies = scanner.scan()
-
-    print_summary(movies)
-
-    print()
-    print("Validating ...")
-
-    validator = Validator()
-
-    if not validator.validate(movies):
-        print()
-        error("Validation Failed")
-        return
-
-    print()
-    success("Validation Passed")
-
-    print()
-    print("Analyzing ...")
-
-    analyzer = Analyzer()
-    analyzer.analyze(movies)
-
-    print()
-    success("Scanner Finished")
-
-
-if __name__ == "__main__":
-    main()
+                Logger.success(f"HLS : {playlist}")

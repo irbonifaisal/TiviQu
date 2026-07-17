@@ -1,23 +1,31 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
-from .episode import Episode
+from encoder.models.episode import Episode
 
 
 @dataclass(slots=True)
 class Movie:
+    """
+    Informasi satu film.
+    """
+
     id: str
+
     title: str
+
     genre: str
-    year: int
 
-    rating: str
-    language: str
-    description: str
+    year: int | str
 
-    poster: str
-    banner: str
-    logo: str
+    synopsis: str
 
     folder: Path
-    episodes: list[Episode]
+
+    poster: str
+
+    banner: str
+
+    logo: str
+
+    episodes: list[Episode] = field(default_factory=list)

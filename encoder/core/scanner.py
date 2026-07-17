@@ -1,16 +1,14 @@
-import inspect
 import json
+from pathlib import Path
 
 from encoder.config import INPUT_DIR
 from encoder.models import Movie, Episode
 
 
-print("Episode module :", Episode.__module__)
-print("Episode sign   :", inspect.signature(Episode))
-print("-" * 50)
-
-
 class Scanner:
+    """
+    Scanner untuk mencari seluruh movie pada workspace/input
+    """
 
     def scan(self) -> list[Movie]:
 
@@ -19,43 +17,66 @@ class Scanner:
         if not INPUT_DIR.exists():
             return movies
 
-        for movie_folder in INPUT_DIR.iterdir():
+        for folder in INPUT_DIR.iterdir():
 
-            if not movie_folder.is_dir():
+            if not folder.is_dir():
                 continue
 
-            movie_json = movie_folder / "movie.json"
+            movie_file = folder / "movie.json"
 
-            if not movie_json.exists():
+            if not movie_file.exists():
                 continue
 
-            with open(movie_json, "r", encoding="utf-8") as f:
-                data = json.load(f)
+            movie = self.load_movie(folder, movie_file)
 
-            movie = Movie(
-                id=data["id"],
-                title=data["title"],
-                genre=data.get("genre", ""),
-                year=data.get("year", ""),
-                synopsis=data.get("synopsis", ""),
-                folder=movie_folder,
-                poster=data.get("poster", "poster.jpg"),
-                banner=data.get("banner", "banner.jpg"),
-                logo=data.get("logo", "logo.png"),
-            )
-
-            for ep_data in data.get("episodes", []):
-
-                ep = Episode(
-                    id=ep_data["id"],
-                    number=ep_data["number"],
-                    title=ep_data["title"],
-                    filename=ep_data["filename"],
-                    filepath=movie_folder / ep_data["filename"],
-                )
-
-                movie.episodes.append(ep)
-
-            movies.append(movie)
+            if movie:
+                movies.append(movie)
 
         return movies
+
+    def load_movie(self, folder: Path, movie_file: Path) -> Movie:
+
+        with open(movie_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        movie = Movie(
+
+            id=data.get("id", ""),
+
+            title=data.get("title", ""),
+
+            genre=data.get("genre", ""),
+
+            year=data.get("year", ""),
+
+            synopsis=data.get("synopsis", ""),
+
+            folder=folder,
+
+            poster=data.get("poster", ""),
+
+            banner=data.get("banner", ""),
+
+            logo=data.get("logo", ""),
+
+        )
+
+        for ep in data.get("episodes", []):
+
+            episode = Episode(
+
+                id=ep.get("id", ""),
+
+                number=ep.get("number", 0),
+
+                title=ep.get("title", ""),
+
+                filename=ep.get("filename", ""),
+
+                filepath=folder / ep.get("filename", "")
+
+            )
+
+            movie.episodes.append(episode)
+
+        return movie

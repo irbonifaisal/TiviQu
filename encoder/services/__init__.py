@@ -1,1 +1,1 @@
-from .ffprobe_service import FFProbeService
+from .ffmpeg_service import FFmpegService
